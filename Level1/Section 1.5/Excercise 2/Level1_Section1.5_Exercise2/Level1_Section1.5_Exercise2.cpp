@@ -1,131 +1,26 @@
-//// Level1_Section1.5_Exercise2.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-//// Exercise Resources: 
-//// https://dzone.com/articles/variadic-template-c-implementing-unsophisticated-t
-//
+// Level1_Section1.5_Exercise2.cpp : This file contains the 'main' function. Program execution begins and ends there.
+/*
+Exercise 2: Application I, Numeric Algorithms with Tuples
+
+Part A) 
+ Create a template class with static member functions to compute 
+ the maximum, sum and average of the elements in the tuple
+
+ Part B) 
+ Test the code on tuples with two and three elements whose underlying 
+ type is double.
+
+ Part C) 
+  Compute the sum and average of a tuple whose element type is 
+  std::complex<int>
+
+  Exercise Used Resources:
+  https://dzone.com/articles/variadic-template-c-implementing-unsophisticated-t
+*/ 
+
 #include <iostream>
 #include <tuple>
 #include <complex>
-//
-//// Defining a variadic template function 
-//
-//// Sum Function 
-//
-//// Complex Sum Function 
-//
-//
-//template <typename T, typename Tuple, std::size_t N>
-//struct Calculator
-//{
-//    //static std::complex<T> complex_sum(const Tuple& tuple)
-//    //{
-//    //    T tmp = Calculator<std::complex<T>, Tuple, N - 1>::complex_sum(tuple);
-//    //    T real_tmp = tmp.real();    // getting the real portion of the number
-//    //    real_tmp += std::get<N - 1>(tuple).real();
-//    //    T img_tmp = tmp.imag();
-//    //    img_tmp += std::get<N - 1>(tuple).imag();
-//
-//    //    static T ret(real_tmp, img_tmp);
-//    //    return ret;
-//    //}
-//    static T sum(const Tuple& tuple)
-//    {
-//        T tmp = Calculator<T, Tuple, N - 1>::sum(tuple);
-//        T ret_tmp = tmp + std::get<(N - 1)>(tuple);
-//        return ret_tmp;
-//    }
-//
-//};
-////    static T maximum(const static Tuple& pack, std::size_t N) {
-////        //Checking that more than one element in the tuple 
-////        if (N == 1)
-////        {
-////            return std::get<N>(pack);
-////        }
-////
-////        else
-////        {
-////            // format (a<b?a:b) where if a<b return a | if a > b return b
-////            return (std::get<N>(pack) < std::get<N - 1>(pack) ? std::get<N>(pack) : std::get<N - 1>(pack));
-////        }
-////        print(pack, N);
-////    };
-////
-////
-////};
-//    
-//        
-//
-////template <typename T, typename Tuple, std::size_t N>
-////struct Calculator
-////{ 
-////    static T maximum(T, const static Tuple& pack, std::size_t N)
-////
-////        // This iterates and does comparison  
-////    {
-////        if (N == 1)
-////        {
-////            return std::get<N>(pack)
-////        }
-////        else
-////        {
-////            return maximum();
-////        }
-////        
-////    }
-////       
-////};
-//
-////template<typename Tuple, std::size_t N>
-////static void print(const Tuple& pack, std::size_t N)
-////{
-////    std::cout << std::get<N - 1>(pack) << "," << std::endl;
-////}
-////
-////template<typename Tuple, std::size_t >
-////struct TuplePrinter
-////
-////{  
-////    static void print(const Tuple& pack, std::size_t N)
-////    {
-////        if (N == 1)
-////        {
-////            return;
-////        } 
-////        else
-////        {
-////            TuplePrinter<Tuple, N - 1>::print(pack);
-////            
-////        }
-////       
-////    }
-////};
-//
-//int main()
-//{
-//    //using TD2 = std::tuple<double, double>;
-//    //using CD2 = Calculator<double, TD2, 2>;
-//    //TD2 td2_1(100, 10); //instance
-//    //std::cout << CD2::maximum(td2_1, 2) << std::endl; //call Sum function
-//
-//    // Complex Sum 
-//    //std::complex<int> c1(1, 1);
-//    //std::complex<int> c2(2, 3);
-//    //using tupTyp = std::tuple < std::complex<int>, std::complex<int>>;
-//    //tupTyp c_tuple{ c1,c2 };
-//    //using calTyp = Calculator<std::complex<int>, tupTyp, 2>; 
-//    //std::cout << calTyp::complex_sum(c_tuple) << std::endl;
-//
-//    // Sum 
-//    int b1(1);
-//    int b2(2);
-//    /*using intTupType = std::tuple <int, int>;*/
-//    std::tuple<int,int> i_tuple{ 1,2 };
-//    /*using intCalType = Calculator<int, const intTupType&, 2>;*/
-//    std::cout << Calculator<int, std::tuple<int,int>,2>::sum(i_tuple);
-//
-//}
-
 
 template <typename T, typename Tuple, std::size_t N>
 struct Calculator
@@ -159,8 +54,7 @@ struct Calculator
         T avg = total / (static_cast<T>(N));
         return avg;
     }
-    
-    
+
 };
 
 // Ending function for recursion purposes 
@@ -238,12 +132,10 @@ int main()
     cplxTupType c2 = { cplx1, cplx2 };
     const std::size_t tupleSize_c2 = std::tuple_size <cplxTupType>();
 
+    // outputting values 
     std::complex<int> sumCplxVal_c2 = Calculator<std::complex<int>, cplxTupType, tupleSize_c2>::sum(c2);
     std::complex<int> avgCplxVal_c2 = Calculator<std::complex<int>, cplxTupType, tupleSize_c2>::avg(c2);
     std::cout << "Complex sum is: " << sumCplxVal_c2 << std::endl;
     std::cout << "Complex avg is: " << avgCplxVal_c2 << std::endl;
     
-    /* dblTupType i_tuple = { b2, b2 };
-    using intCalType = Calculator<int, dblTupType, 2>;
-    std::cout << Calculator<int, dblTupType,2>::max(i_tuple);*/
 }
