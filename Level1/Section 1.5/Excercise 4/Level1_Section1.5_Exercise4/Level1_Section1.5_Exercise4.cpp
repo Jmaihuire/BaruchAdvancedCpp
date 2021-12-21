@@ -25,6 +25,7 @@ Use:
 #include <cstdlib>
 #include <cmath>
 #include <iterator>
+#include <math.h>
 
 template <typename T, typename Vec, typename Return_t>
 struct useAdapters
@@ -142,11 +143,14 @@ struct useAdapters
     } // end function --> numAnalysis(const Vec& inVec, T tgtVal, std::size_t N)
 
 
-    static std::vector<double> vectMax(const Vec& inVec1, const Vec& inVec2, std::size_t N, int i, int j)
+    static std::tuple<int,T> vectAbsMax(const Vec& inVec1, const Vec& inVec2, int i, int j, int errTypeFlag)
     {
-        // Change N to an int M so can use for indexing 
-        int M = static_cast<int>(N);
-
+        // Part B)
+        //         Find the maximum error between two vectors v1and v2 in a given 
+        //         index range[i; j].We wish to compute the difference in some(customisable)
+        //         norm, specifically the absolute error, relative errorand the index values
+        //         where these errors occur.
+        
         // first sort vector in case not sorted 
         Vec inVecTmp1 = inVec1; // making local copy since const 
         Vec inVecTmp2 = inVec2; // making local copy since const 
@@ -161,27 +165,91 @@ struct useAdapters
         for (size_t i = 0; i < inVecTmp2.size(); ++i) { std::cout << inVecTmp2.at(i) << "; "; }
 
         // first check that vectors are larger than second index value 
-        if (j >= inVecTmp1.end() || j >= inVecTmp2.end())
+        if (j > inVecTmp1.size() || j > inVecTmp2.size())
         {
             std::cout << "\nJ index is out of bounds of one of the vectors"; 
-            return -1; 
+            std::tuple<int, T> errorOut = std::make_tuple(-1, -1);
+            return errorOut;
         }
 
         else
         {
-            double sum = 0; 
-            for (int iter = i; iter = j; iter++)
-            {
+            // calculate the P-Norm using equation: |x|_p=(sum_(i)|x_i|^p)^(1/p)
+            // Note ** using difference of Vec1 & Vec2 because finding the error 
+            T sum = 0; 
+            std::vector<T>absErr(j), relErr(j);
+            T normDim = static_cast<T>(j - i);
+            // getting error values 
+            for (int iter = i; iter <=j; iter++)
+            { 
+                std::cout << iter; 
+                int jj = iter - i;
+                absErr[jj] = { std::abs((inVecTmp1[iter] - inVecTmp2[iter])) };
+                T tmpRelErr = std::abs(((inVecTmp1[iter] - inVecTmp2[iter]) / inVecTmp1[iter]));
+                relErr[jj] = { tmpRelErr };
+                sum += std::pow((inVecTmp1[iter] - inVecTmp2[iter]), normDim);
+            }
+            // Calculating total absolute error 
+            T totAbsError = std::pow(sum ,(1 / normDim));
 
-                int normDim = std::distance()
-                sum += ((inVecTmp1[iter]-inVecTmp2[iter])^normDim)
+            // Finding max absolute error using lamda 
+            int maxAbsIter = 0; 
+            int iterAbsTmp = 0;
+            T maxAbs = 0;
+            for_each(absErr.begin(), absErr.end(), [&maxAbs, &maxAbsIter, &iterAbsTmp](double& k) {if (k > maxAbs) { maxAbs = k; maxAbsIter = iterAbsTmp; } else { iterAbsTmp++; }});
+            int maxAbsIdx = i + maxAbsIter; 
+
+            // Finding max relative error using lamda 
+            T maxRel = 0;
+            int maxRelIter = 0;
+            int iterRelTmp = 0;
+            for_each(relErr.begin(), relErr.end(), [&maxRel, &maxRelIter, &iterRelTmp](double& k) {if (k > maxRel) { maxRel = k; maxRelIter = iterRelTmp; } else { iterRelTmp++; }});
+            int maxRelIdx = i + maxRelIter;
+
+            // Outputting based on if Relative or Absolute error flag is set 
+            if (errTypeFlag == 0) //this means absolute error 
+            {
+                std::cout << "\nAbsolute error is: " << maxAbs << "\nAbsolute error index is: " << maxAbsIdx;
+                std::tuple<int, T>outTuple = std::make_tuple(maxAbsIdx, maxAbs);
+                return outTuple;
+            }
+            else if (errTypeFlag == 1) //this means relative error 
+            {
+                std::cout << "\nRelative error is: " << maxRel << "\nRelative error index is: " << maxRelIdx;
+                std::tuple<int, T>outTuple = std::make_tuple(maxRelIdx, maxRel);
+                return outTuple;
+ 
+            }
+            else
+            {
+                std::cout << "\nAbsolute nor Relative error was selected. Input correct flag";
+                std::tuple<int, T> errorOut = std::make_tuple(-1, -1);
+                return errorOut;
             }
         }
     }
 };
 
+
+// creating a print function to output tuple (for part B) 
+template<std::size_t I = 0, typename... Tp>
+inline typename std::enable_if<I == sizeof...(Tp), void>::type
+print(std::tuple<Tp...>& t)
+{ }
+
+template<std::size_t I = 0, typename... Tp>
+inline typename std::enable_if < I < sizeof...(Tp), void>::type
+    print(std::tuple<Tp...>& t)
+{
+    std::cout << std::get<I>(t) << std::endl;
+    print<I + 1, Tp...>(t);
+}
+
 int main()
 {
+    // Part A) sorted numeric vector v and a target value x , 
+    //         find the first index i, such that: v[i] <= x < v[i + 1]?
+    // 
     // creating use case where target value exists 
     std::cout << "\nFour element vector tgt exists:";
     const std::size_t M = 4;
@@ -215,5 +283,45 @@ int main()
     std::cout << "\nb4Out2 is: " << b4Out2 << " Type is: " << typeid(b4Out2).name();
     std::cout << "\nb4Out3 is: " << b4Out3 << " Type is: " << typeid(b4Out3).name();
     std::cout << "\nb4Out3 is: " << b4Out4 << " Type is: " << typeid(b4Out4).name();
+
+    // Part B)
+    //         Find the maximum error between two vectors v1and v2 in a given 
+    //         index range[i; j].We wish to compute the difference in some(customisable)
+    //         norm, specifically the absolute error, relative errorand the index values
+    //         where these errors occur.
+    
+    // Generating Vector 1 
+    std::cout << "\nSeven element vector #1:";
+    const std::size_t sz = 7;
+    std::vector<double> b7(sz);
+    double val7 = 3;
+    std::vector<double> incr1 = { 0.1, 1.8, 1, 1, 4, 9.1,9};
+    int jj = 0;
+    std::for_each(b7.begin(), b7.end(), [&val7, &incr1, &jj](double& k) {k = val7 + incr1[jj]; jj++; });
+
+    // Generating Vector 2
+    std::cout << "\nSeven element vector #2:";
+    std::vector<double> v7(sz);
+    std::vector<double> incr2 = { 8, 2.8, 1.3, 1.1, 4.8, 11,200 };
+    int kk = 0;
+    std::for_each(v7.begin(), v7.end(), [&val7, &incr2, &kk](double& k) {k = val7 + incr2[kk]; kk++; });
+
+    // Index range for comparison 
+    int Lidx = 2;
+    int Hidx = 5;
+
+    // Error type flag  (0 = absolute error; 1 = relative error)
+    int relErrFlag = 1;  //this means absolute error 
+    int absErrFlag = 0; 
+    
+    // Getting Relative Error 
+    std::tuple<int, double> bv7AbsErrOut = useAdapters<double, std::vector<double>, double>::vectAbsMax(b7, v7, Lidx, Hidx, absErrFlag);
+    std::cout << "\nRelative error print output is [index, relative error value]: " << std::endl;
+    print(bv7AbsErrOut);
+
+    // Getting Relative Error 
+    std::tuple<int, double> bv7RelErrOut = useAdapters<double, std::vector<double>, double>::vectAbsMax(b7, v7, Lidx, Hidx, relErrFlag);
+    std::cout << "\nRelative error print output is [index, relative error value]: " << std::endl;
+    print(bv7RelErrOut);
 
 }
