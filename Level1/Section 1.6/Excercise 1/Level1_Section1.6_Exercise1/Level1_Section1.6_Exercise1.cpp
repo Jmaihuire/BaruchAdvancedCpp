@@ -1,5 +1,7 @@
 // Level1_Section1.6_Exercise1.cpp : This file contains the 'main' function. Program execution begins and ends there.
 #include <iostream>
+#include <memory>
+#include <vector>
 
 // Forward Declaration 
 class Base;
@@ -27,12 +29,23 @@ struct Derived : public Base
     ~Derived() { std::cout << "bye derived\n"; }
 };
 
-class Derived2 : public Derived  
+class Derived2 final: public Derived // sealing Derived 2 class 
 {
 
 };
 
 int main()
-{
-    std::cout << "Hello World!\n";
+{   // Part B) 
+    //          Once fixed, create instances of Derived using Base smart pointers
+
+    std::vector< std::shared_ptr<Base> > v; // this will store multiple smart pointers 
+    std::shared_ptr<Base> pa(new Base());   // this is a base smart pointer 
+    std::shared_ptr<Base> pb(new Derived());  // this is a derived smart pointer 
+    v.push_back(pa);
+    v.push_back(pb);   
+    v[0]->print();      
+    v[1]->print();
+    pb->draw();         // this will create an output "print a derived"
+    v[0]->draw();       // this will create an output "print a base "
+
 }

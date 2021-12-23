@@ -10,14 +10,17 @@
 
 #include <iostream>
 #include<tuple>
+#include<functional>
 
 // Forward declaring Class 
 class IODevice;
 class Circle;
 class Line;
-class Point;
+class Rectangle;
+
 
 // Base class for shape 
+// this parses the common input into a reader class 
 class Shape
 {
 public:
@@ -28,10 +31,15 @@ public:
 class IODevice
 {
     // Interface for displaying CAD objects
+
 public:
     virtual void operator << (const Circle& c) = 0;
     virtual void operator << (const Line& c) = 0;
+    virtual void operator << (const Rectangle& c) = 0;
 };
+
+// Builder derived classes are constructed for each target representation: 
+// ie. Shape --> circle, line, rectangle 
 
 // Derived class circle 
 class Circle: public Shape
@@ -54,23 +62,45 @@ public:
     void display(IODevice& ioDevice) const override { ioDevice << *this; };
 };
 
-// Derived class point 
-class Point : public Shape
+// Derived class rectangle 
+class Rectangle : public Shape
 {
 public: 
-    // Default constructor 
-    Point();
-    Point(double new_x, double new_y);
+    int width; 
+    int height;
 
-    // Member Functions 
-    double GetX(); // accessor 
-    double GetY(); // accessor 
-    double SetX(); // mutators 
-    double SetY(); // mutators 
+public: 
+    int rectangle(int w, int h)
+    {
+        width = 0;
+        height = 0;
+    }
+    
+    // Setters 
+    int set_width(int w)
+    {
+        width = w;
+    }
+    int set_height(int h)
+    {
+        height = h;
+    }
 
-private:
-    double xCoord, yCoord;
+    // Calculations 
+    int get_area()
+    {
+        return width * height;
+    }
+
+    int get_perimeter()
+    {
+        return 2 * (width + height);
+    }
+
+    void display(IODevice& ioDevice) const override { ioDevice << *this; };
 };
+
+
 
 // IODevice Class was here prior 
 
@@ -93,16 +123,81 @@ public:
         std::cout << "Center: " << c.center << " and Length: " << c.leng << std::endl;
     };
 
-    void operator << (const Point& c) override
+    void operator<<(const Rectangle& c)
     {
         std::cout << "IODeviceA is on." << std::endl;
-        std::cout << "Center: " << c. << " and Length: " << c.leng << std::endl;
+        std::cout << "Width: " << c.width<< " and Height: " << c.height << std::endl;
     };
 };
-// Class shape was here 
+
+class IODeviceB : public IODevice
+{
+    // interface for displaying CAD objects 
+public:
+
+    // Part A: displaying CAD shape 
+    void operator << (const Circle& c) override
+    {
+        std::cout << "IODeviceB is on." << std::endl;
+        std::cout << "Center: " << c.center << " and Radius: " << c.rad << std::endl;
+    };
+
+
+    void operator << (const Line& c) override
+    {
+        std::cout << "IODeviceB is on." << std::endl;
+        std::cout << "Center: " << c.center << " and Length: " << c.leng << std::endl;
+    };
+
+    void operator<<(const Rectangle& c)
+    {
+        std::cout << "IODeviceB is on." << std::endl;
+        std::cout << "Width: " << c.width << " and Height: " << c.height << std::endl;
+    };
+};
+
+using ShapePointer = std::shared_ptr<Shape>;
+using IODevicePointer = std::shared_ptr<IODevice>;
+
+// the builder creates part of the complex object each time it is called and maintains 
+// all intermediate state. When product is finished, the client retrieves the result 
+// from the builder 
+class Builder
+{
+    // A Builder hierarchy that builds shapes and io devices 
+
+public:
+    
+    std::tuple<ShapePointer, IODevicePointer>getProduct() {
+        std::make_tuple(getShape(), getIODevice());
+    };
+
+    // hook function that derived classes must implement
+    virtual ShapePointer getShape() = 0;
+    virtual IODevicePointer getIODevice() = 0;
+};
+
+class IODevACircleBuilder : Builder
+{
+
+public: 
+    ShapePointer getShape() override {
+        Circle circ(int c, int r);
+    };
+
+    IODevicePointer getIODevice() override {
+        IODeviceA iodevA();
+    }
+    
+};
+
+
 
 int main()
 {
     std::cout << "Hello World!\n";
 }
 
+Builder::Builder(Shape shape)
+{
+}
