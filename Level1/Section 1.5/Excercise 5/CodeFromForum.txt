@@ -1,0 +1,51 @@
+// declare class
+class IODevice;
+
+// class hierarchy, base class shape
+class Shape
+{
+public:
+    virtual void display(IODevice& ioDevice) const = 0;
+};
+// derived class circle
+class Circle : public Shape
+{
+public:
+    int center;
+    int rad;
+    Circle(int c, int r) : center(c), rad(r) {};
+    void display(IODevice& ioDevice) const override { ioDevice << *this; };
+};
+// derived class line
+class Line : public Shape
+{
+public:
+    int center;
+    int leng;
+    Line(int c, int l) : center(c), leng(l) {};
+    void display(IODevice& ioDevice) const override { ioDevice << *this; };
+};
+
+class IODevice
+{
+    // Interface for displaying CAD objects
+public:
+    virtual void operator << (const Circle& c) = 0;
+    virtual void operator << (const Line& c) = 0;
+};
+
+class IODevice1 : public IODevice
+{
+    // Interface for displaying CAD objects
+public:
+    void operator << (const Circle& c) override
+    {
+        cout << "IODevice1 is on." << endl;
+        cout << "Center: " << c.center << " and Radius: " << c.rad << endl;
+    };
+    void operator << (const Line& c) override
+    {
+        cout << "IODevice1 is on." << endl;
+        cout << "Center: " << c.center << " and Length: " << c.leng << endl;
+    };
+};

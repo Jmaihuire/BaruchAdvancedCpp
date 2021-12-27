@@ -24,6 +24,7 @@ using OutputFunction = std::function<void(const std::vector<double>&)>;
 //          Create a single class TMPClass consisting of a vector, 
 //          input deviceand output device.Build the code for the algorithm.
 
+// TMPClass is the base class 
 struct TMPClass
 {
 private:
@@ -66,6 +67,51 @@ class Preprocessor : public TMPClass
 
 
 };
+
+// CRTP pattern
+template <typename D>
+struct Base
+{
+    double algorithm(double x)
+    { // Template method pattern
+
+        // Variant part I
+        double y = Preprocess(x);
+
+        // Invariant part; normally more complex computations
+        y += 2.0;
+        if (y <= 21.0)
+            y = 3.3;
+        else
+            y = 3.4;
+
+        // Variant part II
+        double z = Postprocess(x);
+
+        // Postcondition
+        return y * z;
+
+    }
+
+    inline double Preprocess(double x)
+    {
+        return static_cast<D*> (this)->Preprocess(x);
+    }
+
+    inline double Postprocess(double x)
+    {
+        return static_cast<D*> (this)->Postprocess(x);
+    }
+
+    virtual ~Base() {}
+};
+
+struct DerivedCRTP : Base<DerivedCRTP>
+{
+    inline double Preprocess(double x) { return exp(-x * x); }
+    inline double Postprocess(double x) { return tanh(x); }
+};
+
 
 
 int main()
