@@ -30,7 +30,8 @@ using OutputFunction = std::function<void(const std::vector<double>&)>;
 using InputFunction = std::function<double()>;
 using OutputFunction = std::function<void(const std::vector<double>&)>;
 
-class TMPClass
+// No derived class so sealing class using final 
+class TMPClass final 
 {
 private:
     std::vector<double>m_vec;
