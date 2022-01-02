@@ -16,8 +16,8 @@
 void print(std::tuple <std::string, std::string, boost::gregorian::date>const& inputTuple) {
     std::cout << "(" << std::get<0>(inputTuple) << ", " << std::get<1>(inputTuple)
         << ", ";
-    boost::gregorian::date Date = std::get<2>(inputTuple); 
-        std::cout << Date << ")\n";
+    boost::gregorian::date Date = std::get<2>(inputTuple);
+    std::cout << Date << ")\n";
 }
 
 // Sorting Funciton (1D)
@@ -32,8 +32,8 @@ void printSpan(const std::span<int>& ref)
 {
     for (int val : ref)
         std::cout << val << " ";
-    
-    std::cout << "\n"; 
+
+    std::cout << "\n";
 }
 
 // Print using indexing [] (1E)
@@ -62,7 +62,7 @@ void TestSpan()
     // creating test data 
     const int M = 10;
     std::array<int, M> fixedArray = { 1,2,3,4,5,6,7,8,9,10 };
-    std::vector<int> variableArray1 = { 2,4,6,8,10,12,14,16,18,20 };  
+    std::vector<int> variableArray1 = { 2,4,6,8,10,12,14,16,18,20 };
     int variableArray[5] = { 10,20,30,40,50 };
 
     // Creating spans (contigious sequence of objects) 
@@ -80,7 +80,7 @@ void TestSpan()
     nLastElem(s2, 3);
 
     testSubspan(s1, 2, 3);
- 
+
 }
 
 // returning first and last N elements of span (1F)
@@ -120,8 +120,8 @@ int main()
 {
     // Declaring Tuple 
     // Person with: Name, Adress, and date of birth (1A)
-    std::tuple <std::string, std::string, boost::gregorian::date> Person; 
-    
+    std::tuple <std::string, std::string, boost::gregorian::date> Person;
+
     // Declaring tupple (1A)
     Person = std::make_tuple("John Doe", "800 NiceStreet Street", boost::gregorian::date{ 1980, 1, 31 });
 
@@ -130,12 +130,12 @@ int main()
     print(Person);
 
     // Vector of people (1C)
-    std::vector<std::tuple <std::string, std::string, boost::gregorian::date>> manyPeople; 
+    std::vector<std::tuple <std::string, std::string, boost::gregorian::date>> manyPeople;
     manyPeople.push_back(std::make_tuple("Good Guy", "800 NiceStreet Street", boost::gregorian::date{ 1980, 1, 31 }));
     manyPeople.push_back(std::make_tuple("Bad Guy", "800 BadStreet Street", boost::gregorian::date{ 1970, 1, 31 }));
 
     // Sorting tuples (1D) 
-    sort(manyPeople.begin(), manyPeople.end(), sortTuple); 
+    sort(manyPeople.begin(), manyPeople.end(), sortTuple);
 
     // Byte Work 
     // ** To DO ** Maybe give brief description here 
@@ -152,7 +152,6 @@ int main()
             << std::setfill('0')
             << std::to_integer<int>(b) << ' ';
     }
-    
+
 
 }
-

@@ -15,7 +15,8 @@ is composed of a container:
 // Storage class needs to preceed client class as Client uses storage 
 // C++ 98 approach
 // Data storage types
-template <typename T> struct Storage
+template <typename T> struct 
+Storage
 {
     // Possible ADTs and their memory allocators
     // typedef std::vector<T, CustomAllocator<T>> type;

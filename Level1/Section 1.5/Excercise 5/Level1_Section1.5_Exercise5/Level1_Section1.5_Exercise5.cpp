@@ -1,4 +1,5 @@
 // Level1_Section1.5_Exercise5.cpp : This file contains the 'main' function. Program execution begins and ends there.
+// Exercise 5: A simple next-Generation Builder Pattern
 // Part A) 
 // Create derived classes Circleand Line.Create I / O device classes to display 
 // CAD shapes in different ways.
@@ -137,7 +138,7 @@ class IODeviceB : public IODevice
     // interface for displaying CAD objects 
 public:
 
-    // Part A: displaying CAD shape 
+    // Part A) displaying CAD shape 
     void operator << (const Circle& c) override
     {
         std::cout << "IODeviceB is on." << std::endl;
@@ -319,7 +320,7 @@ public:
 
 };
 
-
+// Implimentation of the different builder classes 
 int main()
 {   
     // Builder 1:  Circle + IODeviceA

@@ -13,7 +13,7 @@ standard deviation and variance.
 #include <tuple>
 #include <numeric>
 #include <algorithm>
-#include <boost/numeric/ublas/vector.hpp>
+//#include <boost/numeric/ublas/vector.hpp>
 //#include <boost/numeric/ublas/io.hpp>
 //#include <boost/numeric/ublas/assignment.hpp> 
 
@@ -175,7 +175,7 @@ struct getMiddle
             // **** Boost include is not working since have vs2019 and boost 1_63_0 
             // **** Need to get vs2017 and boost 1_70_0 to get it to work properly 
 
-            std::cout << "Four element boost vector: \n";
+            //std::cout << "Four element boost vector: \n";
             //namespace boost = boost::numeric::ublas;
             //boost::vector<double, std::vector<double>> vecBoost = std::move(v4); 
             //const boostU::c_vector<double,bvN> bv4 = boostA::list_of(3.0)(2.5)(10.3)(4.0);

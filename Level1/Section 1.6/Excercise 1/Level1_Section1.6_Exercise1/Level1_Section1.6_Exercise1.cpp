@@ -1,4 +1,5 @@
 // Level1_Section1.6_Exercise1.cpp : This file contains the 'main' function. Program execution begins and ends there.
+// Exercise 1: Using Sealed Classes and Sealed Member Functions
 #include <iostream>
 #include <memory>
 #include <vector>
