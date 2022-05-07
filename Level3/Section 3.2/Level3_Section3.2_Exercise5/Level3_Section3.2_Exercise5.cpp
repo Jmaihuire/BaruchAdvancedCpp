@@ -1,77 +1,60 @@
 // Level3_Section3.2_Exercise5.cpp :
 // Fiona Ross - 04-16-2022
 #include <iostream>
-#include <mutex>
 #include <thread>
+#include <atomic>
 #include "SynchronisedQueue.h"
-#include "Consumer.h"
-#include "Producer.h"
+#include "Producers.h"
+#include "Consumers.h"
 
 std::atomic<bool> barberReady = false;
-std::atomic<bool> customerReady = false;
-
-std::mutex m;  // Ensures no race condition
-
-// Synchronization between master and worker
-std::condition_variable cv;
-
-// Consumer code 
-void Customer() {
-    // wait until customer enters 
-    // False state: wait until master sends data
-  std::unique_lock<std::mutex> myLock(m);
-  cv.wait(myLock, [] { return customerReady.load(); }); //including load() for
-  // atomic boolean
-  //cv.wait(myLock, [] { return customerReady.test_and_set(); });
-
-  // Now in True State
-  std::cout << "Customer is ready \n";
-
-  // Notify master
-  barberReady = true;
-  //masterReady.test_and_set();
-
-  // Postprocess
-  myLock.unlock();
-  cv.notify_one();
-  std::cout << "Worker is exited...\n";
-}
-
-// Producer Code 
-void Barber() {
-
-    // hang around and wait for the customer to enter
-   
-  while (!customerReady.load()) 
-      {
-      std::cout.put('.').flush();
-
-      // go back to sleep
-      std::this_thread::sleep_for(std::chrono::seconds(10));
-
-  }
-
-  std::cout << "Barber is sleeping while waiting for next customer"
-            << std::endl;
-  // can output data value here 
-    // std::cout << "Value of data is: " << data << std::endl; 
-
-}
 
 int main() {
   // The number of producers / consumers
-  int nrProducers = 10;  // ten clients all coming in every 10 seconds
-  int nrConsumers = 1;   // one Barber
+  const int nrProducers = 1;  // the producer is producing clients every 10 seconds. Its not the total number of clients. 
+  const int nrConsumers = 1;   // one Barber
+  const int nrChairs = 4;      // number of chairs available
 
   // The shared queue
   SynchronisedQueue<std::string> queue;
+  std::mutex* consoleMutex(new std::mutex);
 
   // Create producers
-  std::vector<std::thread> grp;
+  std::thread grpP[nrProducers];  // array of producers
+
   for (int i = 0; i < nrProducers; i++) {
-    
+    // create instance of Producer
+    Producer p(i, &queue, nrChairs);
 
-  }
-  
+    // reference wrapper (same as interupt)
+    auto p_thread = std::thread(p, std::ref(barberReady));
+
+    // input into vector
+    grpP[i] = std::move(p_thread);
   }
 
+  // Create Consumers
+  std::thread grpC[nrConsumers];  // array of consumers
+  for (int i = 0; i < nrConsumers; i++) {
+    // create instance of Consumers
+    Consumer c(i, &queue);
+
+    // reference wrapper (same as interupt)
+    auto c_thread = std::thread(c, std::ref(barberReady));
+
+    // input into vector
+    grpC[i] = std::move(c_thread);
+  }
+
+  getchar();           // wait for enter
+  barberReady = true;  // Turn atomic bool to true
+
+  // Joining & interupt
+  for (auto& p : grpP) {
+    p.join();  // joining the threads
+  }
+
+  for (auto& c : grpC) {
+    c.join();  // joining the threads
+  }
+}
