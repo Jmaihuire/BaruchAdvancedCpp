@@ -1,20 +1,49 @@
-// Level5_Section5.9_Exercise2.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+// Level5_Section5.9_Exercise2.cpp
+// Fiona Ross 
+// Slot Groups 
 
 #include <iostream>
+#include <boost/signals2/signal.hpp>
+#include <functional>
+// lambda function slot
+auto lambdaSlot = []() { std::cout << "Lambda function slot \n"; };
+
+// define a normal function
+void mySlot() { std::cout << "a first slot " << std::endl; }
+
+// define a function object
+struct SecondSlot {
+  int data;
+
+  SecondSlot() { data = 0; }
+  SecondSlot(int val) { data = val; }
+
+  void operator()() { std::cout << " a second slot " << data << std::endl; }
+};
+
+struct MyStruct {
+  double val;
+  MyStruct(double v) { val = v; }
+  void modify(double newValue) {
+    val = newValue;
+    std::cout << "A third slot " << val << std::endl;
+  }
+};
 
 int main()
 {
-    std::cout << "Hello World!\n";
+  // Part A: 
+  boost::signals2::signal<void()> signal;
+  // connect slots with individual groups
+  signal.connect(1, boost::ref(lambdaSlot));
+  SecondSlot slot1(12);
+  signal.connect(2, boost::ref(slot1));
+  signal.connect(3, boost::ref(mySlot));
+
+  MyStruct mySlot(4);  // create new slot
+  signal.connect(5,std::bind(&MyStruct::modify, &mySlot, 2.0));  // add this slot
+  
+  // Part B:                                                            
+  signal();  //looking at results 
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
