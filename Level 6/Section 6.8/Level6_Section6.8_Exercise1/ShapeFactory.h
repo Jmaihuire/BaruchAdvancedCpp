@@ -1,5 +1,3 @@
-//Alex Moody: Factory Pattern
-
 #pragma once
 #include <memory>
 
